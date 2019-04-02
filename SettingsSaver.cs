@@ -31,13 +31,13 @@ namespace SettingsSaver
         {
             var serializer = new XmlSerializer(typeof(List<FormInfo>));
 
-            Stream fs = new FileStream(_settingsFileName, FileMode.Create);
-            XmlWriter writer = XmlWriter.Create(fs,
-                new XmlWriterSettings { Indent = _indent, Encoding = Encoding.Unicode });
-            serializer.Serialize(writer, _formData.Values.ToList());
-            writer.Close();
-            fs.Close();
-            fs.Dispose();
+            using (var fs = new FileStream(_settingsFileName, FileMode.Create))
+            {
+                XmlWriter writer = XmlWriter.Create(fs,
+                    new XmlWriterSettings { Indent = _indent, Encoding = Encoding.Unicode });
+                serializer.Serialize(writer, _formData.Values.ToList());
+                writer.Close();
+            }
         }
 
         public void LookAfterForm(Form form)
@@ -49,11 +49,13 @@ namespace SettingsSaver
         private void FormClosed(object sender, FormClosedEventArgs e)
         {
             SaveFormSettings((Form)sender);
+            ((Form) sender).FormClosed -= FormClosed;
         }
 
         private void Form_Load(object sender, EventArgs e)
         {
             RestoreFormSettings((Form)sender);
+            ((Form)sender).Load -= Form_Load;
         }
 
         private void SaveFormSettings(Form form)
