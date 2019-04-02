@@ -183,23 +183,4 @@ namespace SettingsSaver
 
     }
 
-    public  static class ExtensionClass
-    {
-        public static XElement ToXElement<T>(this object obj)
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                using (TextWriter streamWriter = new StreamWriter(memoryStream))
-                {
-                    XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
-
-                    ns.Add("","");
-                    var xmlSerializer = new XmlSerializer(typeof(T));
-                    xmlSerializer.Serialize(streamWriter, obj, ns);
-                    return XElement.Parse(Encoding.ASCII.GetString(memoryStream.ToArray()));
-                }
-            }
-        }
-    }
-
 }
